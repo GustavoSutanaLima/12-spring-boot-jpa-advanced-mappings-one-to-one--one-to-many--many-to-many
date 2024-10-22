@@ -1,14 +1,18 @@
 package edu.gusta_dev.cruddemo_advanced.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.gusta_dev.cruddemo_advanced.entity.Course;
 import edu.gusta_dev.cruddemo_advanced.entity.Instructor;
 import edu.gusta_dev.cruddemo_advanced.entity.InstructorDetail;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 @Repository
 public class AppDAOImplementacao implements AppDAO {
@@ -80,6 +84,38 @@ public class AppDAOImplementacao implements AppDAO {
         //instructorDetailDetailToDelete.setInstructor(null);
 
         entityManager.remove(instructorDetailDetailToDelete);
+    }
+
+    @Override
+    public List<Course> findCoursesByInstructorId(int id) {
+        
+        TypedQuery<Course> queryToFindCourses = 
+            entityManager.createQuery("SELECT c FROM Course c WHERE c.instructor.id= :data", Course.class)
+                         .setParameter("data", id);
+            //SELECT c FROM Course c WHERE c.instructor.id= :data
+            /* Usando a JPQL: A Classe Course não tem um atributo que faz referencia direta ao id do instructor
+             * Ela faz referência a um objeto instructor. Porém, dentro da Query, é possível dar um get
+             * já que o objeto instrutor tem um método getId:
+             * baser usar "Course.instructor.id" dentro da query que se traduz para java:
+             * Course.getInstructor().getId();
+             */
+
+        return queryToFindCourses.getResultList();
+    }
+
+    @Override
+    public Instructor findInstructorByIdJoinFetch(int id) {
+        
+        TypedQuery<Instructor> query = entityManager.createQuery(
+          "SELECT inst FROM Instructor inst JOIN FETCH inst.courses where inst.id = :data",  
+        Instructor.class).setParameter("data", id);
+
+        //JOIN FETCH exclui a necessidade do método acima, ou seja, não é preciso dar um retrieve nos cursos,
+        //setá-los ao Instructor e depois dar um get para printar o resultado;
+
+        /* JOIN FETCH "modifica" o fetch da anotação @OneToMany */
+
+        return query.getSingleResult();
     }
 
 

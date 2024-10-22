@@ -2,12 +2,18 @@ package edu.gusta_dev.cruddemo_advanced.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 
 
@@ -28,21 +34,21 @@ public class Instructor {
 
     @Column(name = "email")
     private String email;
-
     
     
-    @OneToOne(cascade = CascadeType.ALL) 
     /* Definindo a relação entre as duas tabelas Instructor e InstructorDetail */
-
+    
     /* A tabela Instructor possui uma foreign key de nome igual à "instructor_detail_id" */
     /* Para definir o relacionamento dessas duas tabelas em Java (no Banco de Dados SQL esse relacionamento já está configurado)  */
     /* Será preciso criar um atributo dentro da classe Instructor do tipo InstructorDetail (objeto da foreign key no banco de dados) */
-
+    
     // @OneToOne faz o mapeamento do relacionado Um para um, cada objeto do tipo Instructor tem um único InstructorDetail viculado à ele e nenhum outro;
     // CascadeType.ALL basicamente configura esta classe para que: quando um objeto do tipo Instructor sofrer algum tipo de processamento
     // (um DELETE, por exemplo), o seu complemento do tipo Instructor detail também sofrerá este mesmo tipo de processamento (também será deletado);
     
+    @OneToOne(cascade = CascadeType.ALL) 
     @JoinColumn(name = "instructor_detail_id")
+    private InstructorDetail instructorDetail;
     /*
      * A anotação @JoinColumn é usada para especificar a coluna de chave estrangeira que será utilizada para a relação 
      * entre duas tabelas no banco de dados. Neste código, @JoinColumn(name = "instructor_detail_id") faz o seguinte:
@@ -51,10 +57,15 @@ public class Instructor {
      * Em resumo, essa anotação liga a entidade Instructor à entidade InstructorDetail usando a coluna instructor_detail_id 
      * como chave estrangeira. Isso permite o mapeamento bidirecional entre os dois objetos no banco de dados.
      */
-    private InstructorDetail instructorDetail;
+
+
+    /* mappedBy se refere ao atribuito instructor da classe Course */
+    @OneToMany(mappedBy = "instructor", 
+               cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST},
+               fetch = FetchType.LAZY) 
+    private List<Course> courses;
 
     //No args construtor:
-
     public Instructor() {
 
     }
@@ -116,13 +127,35 @@ public class Instructor {
         this.instructorDetail = instructorDetail;
     }
 
-    //ToString method:
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    public void add(Course courseToAdd) {
+        if(this.courses == null) {
+            this.courses = new ArrayList<Course>();
+        }
+        
+        this.courses.add(courseToAdd);
+
+        courseToAdd.setInstructor(this);
+    }
+
+
+
     @Override
     public String toString() {
         return "Instructor [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
                 + ", instructorDetail=" + instructorDetail + "]";
     }
 
+    
+    
+    
 
     
 

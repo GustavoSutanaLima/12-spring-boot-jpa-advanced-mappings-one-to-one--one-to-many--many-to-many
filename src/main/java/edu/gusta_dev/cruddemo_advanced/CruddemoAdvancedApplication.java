@@ -1,5 +1,7 @@
 package edu.gusta_dev.cruddemo_advanced;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -7,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import edu.gusta_dev.cruddemo_advanced.dao.AppDAO;
+import edu.gusta_dev.cruddemo_advanced.entity.Course;
 import edu.gusta_dev.cruddemo_advanced.entity.Instructor;
 import edu.gusta_dev.cruddemo_advanced.entity.InstructorDetail;
 
@@ -20,12 +23,74 @@ public class CruddemoAdvancedApplication {
 	@Bean
 	public CommandLineRunner commandLineRunner (AppDAO appDAO) {
 		return runner -> {
-			saveInstructor(appDAO);
+			//saveInstructor(appDAO);
 			//System.out.println(findInstructorById(appDAO));	
 			//deleteInstructorById(appDAO);
 			//findInstructorDetailById(appDAO);
 			//deleteInstructorDetailById(appDAO);
+			//createInstructorWithCourses(appDAO);
+			//findInstructorWithCourses(appDAO);
+			findInstructorWithCoursesEnhanced(appDAO);
 		};
+	}
+
+	private void findInstructorWithCoursesEnhanced(AppDAO appDAO) {
+		int instructorId = 1;
+
+		System.out.println("Finding instructor of ID: " + instructorId );
+
+		System.out.println("...");
+
+		Instructor instructorFound = appDAO.findInstructorByIdJoinFetch(instructorId);
+
+		System.out.println("Found Instructor: " + instructorFound);
+		System.out.println("Courses: " + instructorFound.getCourses());
+	}
+
+	private void findInstructorWithCourses(AppDAO appDAO) {
+		int instructorId = 1;
+
+		System.out.println("Finding instructor of ID: " + instructorId );
+
+		Instructor foundInstructor = appDAO.findInstructorById(instructorId);
+
+		System.out.println("Temp Instructor = " + foundInstructor);
+
+		List<Course> courses = appDAO.findCoursesByInstructorId(instructorId);
+
+		System.out.println(courses);
+
+		foundInstructor.setCourses(courses);
+
+		System.out.println("Associated courses: " + foundInstructor.getCourses());
+
+		System.out.println("DONE!");
+	}
+
+	private void createInstructorWithCourses(AppDAO appDAO) {
+		
+		Instructor tempInstructor = 
+			new Instructor("Gustavo", "Sutana", "gustavosutanalima@gmail.com");
+
+		InstructorDetail tempInstructorDetail = 
+			new InstructorDetail("https://www.youtube.com/users/gustavosutanalima", "Cycling");
+	
+		Course mathCourse = new Course("Math Course");
+		Course portCourse = new Course("Portuguese Course");
+		Course engCourse = new Course("English Course");
+		Course progCourse = new Course("Programming Course");
+		
+		tempInstructor.add(mathCourse);
+		tempInstructor.add(portCourse);
+		tempInstructor.add(engCourse);
+		tempInstructor.add(progCourse);
+		
+		tempInstructor.setInstructorDetail(tempInstructorDetail);
+
+		System.out.println("Instructor to be saved: " + tempInstructor);
+		
+		appDAO.saveInstructor(tempInstructor);
+
 	}
 
 	private void deleteInstructorDetailById(AppDAO appDAO) {
