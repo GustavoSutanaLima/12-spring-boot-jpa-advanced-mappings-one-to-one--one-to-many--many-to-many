@@ -11,7 +11,6 @@ import edu.gusta_dev.cruddemo_advanced.entity.Instructor;
 import edu.gusta_dev.cruddemo_advanced.entity.InstructorDetail;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 @Repository
@@ -37,15 +36,15 @@ public class AppDAOImplementacao implements AppDAO {
     @Override
     public Instructor findInstructorById(int id) {
         
-        Query queryToFindInstrcutorById = entityManager //dentro do argumento de createQuery é preciso usar o nome da classe como ela é no java e não no BD
-                                            .createQuery("SELECT inst FROM Instructor inst WHERE inst.id= :idToFindInstructorBy")
+        TypedQuery<Instructor> queryToFindInstrcutorById = entityManager //dentro do argumento de createQuery é preciso usar o nome da classe como ela é no java e não no BD
+                                            .createQuery("SELECT inst FROM Instructor inst WHERE inst.id= :idToFindInstructorBy", Instructor.class)
                                             // na hora de referenciar o parâmetro a ser passado abaixo, é preciso adicionar ":" ao nome 
                                             // do parâmetro na query;
                                             .setParameter("idToFindInstructorBy", id);
 
         
         try {
-            return (Instructor) queryToFindInstrcutorById.getSingleResult();
+            return queryToFindInstrcutorById.getSingleResult();
 
         } 
         catch (NoResultException e) {
@@ -117,6 +116,56 @@ public class AppDAOImplementacao implements AppDAO {
 
         return query.getSingleResult();
     }
+
+    @Override
+    @Transactional
+    public void updateInstructor(Instructor instructorToUpdate) {
+        entityManager.merge(instructorToUpdate);
+    }
+
+    @Override
+    @Transactional
+    public void updateCourse(Course courseToUpdate) {
+        entityManager.merge(courseToUpdate);
+    }
+
+    @Override
+    public Course findCourseById(int id) {
+        
+        TypedQuery<Course> queryToFindCourseById = entityManager.createQuery(
+            "SELECT co FROM Course co WHERE co.id = :data", Course.class)
+            .setParameter("data", id);
+
+        return queryToFindCourseById.getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public void deleteInstructor(Instructor instructorToDelete) {
+        
+        int idOfInstructor = instructorToDelete.getId();
+
+        Instructor foundInstrcutor =  entityManager.find(Instructor.class, idOfInstructor);
+
+        List<Course> courses = foundInstrcutor.getCourses();
+
+        for (Course course : courses) {
+            course.setInstructor(null);
+        }
+
+        entityManager.remove(foundInstrcutor);
+
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteCourseById(int id) {
+        Course courseToDelete = findCourseById(id);
+        entityManager.remove(courseToDelete);
+    }
+
+    
 
 
 

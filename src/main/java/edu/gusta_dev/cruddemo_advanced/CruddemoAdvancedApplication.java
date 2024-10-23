@@ -30,8 +30,72 @@ public class CruddemoAdvancedApplication {
 			//deleteInstructorDetailById(appDAO);
 			//createInstructorWithCourses(appDAO);
 			//findInstructorWithCourses(appDAO);
-			findInstructorWithCoursesEnhanced(appDAO);
+			//findInstructorWithCoursesEnhanced(appDAO);
+			//updateInstructor(appDAO);
+			//updateCourse(appDAO);
+			//deleteInstructorOne(appDAO);
+			deleteCourse(appDAO);
+
 		};
+	}
+
+	private void deleteCourse(AppDAO appDAO) {
+
+		int idToDelete = 15;
+
+		appDAO.deleteCourseById(idToDelete);
+	}
+
+	private void deleteInstructorOne(AppDAO appDAO) {
+		
+		int idToFind = 3;
+
+		System.out.println("Finding the Instrcutor of id to delete: "+ idToFind);
+
+		Instructor foundInstructor = appDAO.findInstructorById(idToFind);
+
+		appDAO.deleteInstructor(foundInstructor);
+	}
+
+	private void updateCourse(AppDAO appDAO) {
+		//id of the course to update;
+		int id = 11;
+
+		System.out.println("Fiding course id of: " + id);
+
+		Course foundCourse = appDAO.findCourseById(id);
+
+		System.out.println("Found Course: " + foundCourse);
+
+		foundCourse.setTitle("Things are not what they seem anymore");
+
+		appDAO.updateCourse(foundCourse);
+
+		Course newCourseName = appDAO.findCourseById(id);
+
+		System.out.println("New title: " + newCourseName.getTitle());
+	}
+
+	private void updateInstructor(AppDAO appDAO) {
+		int idToFind = 1;
+
+		System.out.println("Finding the Instrcutor of id: "+ idToFind);
+
+		Instructor foundInstructor = appDAO.findInstructorById(idToFind);
+
+		System.out.println("Instructor found: " + foundInstructor);
+
+		foundInstructor.setFirstName("Heather");
+		foundInstructor.setLastName("Swamson");
+		foundInstructor.setEmail("heather@luv2code.com");
+
+		appDAO.updateInstructor(foundInstructor);
+
+		Instructor updatedInstructor = appDAO.findInstructorById(idToFind);
+
+		System.out.println("Instructor of id " + idToFind + " is now: " + updatedInstructor);
+
+		System.out.println("Done!");
 	}
 
 	private void findInstructorWithCoursesEnhanced(AppDAO appDAO) {
