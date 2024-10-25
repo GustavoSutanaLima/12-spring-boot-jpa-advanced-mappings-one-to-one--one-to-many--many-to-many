@@ -12,6 +12,7 @@ import edu.gusta_dev.cruddemo_advanced.dao.AppDAO;
 import edu.gusta_dev.cruddemo_advanced.entity.Course;
 import edu.gusta_dev.cruddemo_advanced.entity.Instructor;
 import edu.gusta_dev.cruddemo_advanced.entity.InstructorDetail;
+import edu.gusta_dev.cruddemo_advanced.entity.Review;
 
 @SpringBootApplication
 public class CruddemoAdvancedApplication {
@@ -34,9 +35,41 @@ public class CruddemoAdvancedApplication {
 			//updateInstructor(appDAO);
 			//updateCourse(appDAO);
 			//deleteInstructorOne(appDAO);
-			deleteCourse(appDAO);
-
+			//deleteCourse(appDAO);
+			//createCourseAndReview(appDAO);
+			//findCourseWithReviews(appDAO);
+			delteCourseAndReviews(appDAO);
 		};
+	}
+
+	private void delteCourseAndReviews(AppDAO appDAO) {
+		int courseId = 12;
+
+		appDAO.deleteCourseById(courseId);
+	}
+
+	private void findCourseWithReviews(AppDAO appDAO) {
+		int courseId = 12;
+
+		Course courseFound = appDAO.findCourseAndReviewsByCourseId(12);
+
+		System.out.println(courseFound);
+		System.out.println(courseFound.getReviews());
+	}
+
+	private void createCourseAndReview(AppDAO appDAO) {
+		Course javaCourse = new Course("Spring Boot");
+
+		javaCourse.addReview(new Review("The course is great, but I anxious to be done with it as soon as i can!"));
+		javaCourse.addReview(new Review("The teacher is great and high-spirited"));
+		javaCourse.addReview(new Review("4 out of 5, awesome course"));
+
+		System.out.println("Saving the course...");
+		System.out.println(javaCourse);
+		System.out.println(javaCourse.getReviews());
+
+		appDAO.saveCourse(javaCourse);
+
 	}
 
 	private void deleteCourse(AppDAO appDAO) {

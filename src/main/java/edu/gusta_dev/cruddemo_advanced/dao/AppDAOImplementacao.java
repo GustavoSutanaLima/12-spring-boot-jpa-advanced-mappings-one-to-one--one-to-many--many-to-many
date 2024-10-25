@@ -165,6 +165,22 @@ public class AppDAOImplementacao implements AppDAO {
         entityManager.remove(courseToDelete);
     }
 
+
+    @Override
+    @Transactional
+    public void saveCourse(Course courseToBeSaved) {
+        entityManager.persist(courseToBeSaved);
+    }
+
+    @Override
+    public Course findCourseAndReviewsByCourseId(int courseId) {
+        
+        TypedQuery<Course> query = entityManager.createQuery(
+            "SELECT cour FROM Course cour JOIN FETCH cour.reviews WHERE cour.id = :data", Course.class)
+            .setParameter("data", courseId); //foi necessário fazer um JOIN FETCH aqui pois o fetch type na anotação sobre a lista de reviews foi setado para LAZY;
+
+        return query.getSingleResult();
+    }
     
 
 
