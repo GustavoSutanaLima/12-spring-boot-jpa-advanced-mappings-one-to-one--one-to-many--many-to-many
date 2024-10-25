@@ -13,6 +13,7 @@ import edu.gusta_dev.cruddemo_advanced.entity.Course;
 import edu.gusta_dev.cruddemo_advanced.entity.Instructor;
 import edu.gusta_dev.cruddemo_advanced.entity.InstructorDetail;
 import edu.gusta_dev.cruddemo_advanced.entity.Review;
+import edu.gusta_dev.cruddemo_advanced.entity.Student;
 
 @SpringBootApplication
 public class CruddemoAdvancedApplication {
@@ -38,8 +39,48 @@ public class CruddemoAdvancedApplication {
 			//deleteCourse(appDAO);
 			//createCourseAndReview(appDAO);
 			//findCourseWithReviews(appDAO);
-			delteCourseAndReviews(appDAO);
+			//delteCourseAndReviews(appDAO);
+			//createCourseAndStudents(appDAO);
+			//findCourseWithStudents(appDAO);
+			findStudentWithCourses(appDAO);
 		};
+	}
+
+	private void findStudentWithCourses(AppDAO appDAO) {
+		int studentId = 1;
+
+		Student foundStudent = appDAO.findStudentWithCourses(studentId);
+
+		System.out.println("Student found:" + foundStudent);
+		System.out.println("Courses that this Studend is enrolled in:" + foundStudent.getCourses());
+	}
+
+	private void findCourseWithStudents(AppDAO appDAO) {
+		
+		int courseId = 10;
+
+		Course foundCourse = appDAO.findCourseWithStudents(courseId);
+
+		System.out.println("Course found:" + foundCourse);
+		System.out.println("Students in this course:" + foundCourse.getStudents());
+
+		
+	}
+
+	private void createCourseAndStudents(AppDAO appDAO) {
+		Course math = new Course("This is a Math course");
+		//Course port = new Course("This is a Portuguese course");
+
+		Student gustavo = new Student("Gustavo", "Lima", "gustavo@gmail.com");
+		Student jonn = new Student("Jonn", "Lima", "jonn@gmail.com");
+		Student leo = new Student("Leonardo", "Bigogno", "leonardo@gmail.com");
+
+		math.addStudent(leo);
+		math.addStudent(jonn);
+		math.addStudent(gustavo);
+
+		appDAO.saveCourse(math);
+
 	}
 
 	private void delteCourseAndReviews(AppDAO appDAO) {

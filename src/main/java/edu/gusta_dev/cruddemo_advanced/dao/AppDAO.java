@@ -3,6 +3,7 @@ package edu.gusta_dev.cruddemo_advanced.dao;
 import java.util.List;
 
 import edu.gusta_dev.cruddemo_advanced.entity.Course;
+import edu.gusta_dev.cruddemo_advanced.entity.Student;
 import edu.gusta_dev.cruddemo_advanced.entity.Instructor;
 import edu.gusta_dev.cruddemo_advanced.entity.InstructorDetail;
 
@@ -35,5 +36,9 @@ public interface AppDAO {
     void saveCourse(Course courseToBeSaved);
 
     Course findCourseAndReviewsByCourseId(int courseId);
+
+    Course findCourseWithStudents(int courseId);
+
+    Student findStudentWithCourses(int studentId);
     
 }

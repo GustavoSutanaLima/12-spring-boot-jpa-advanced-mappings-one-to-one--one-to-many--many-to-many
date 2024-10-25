@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.gusta_dev.cruddemo_advanced.entity.Course;
 import edu.gusta_dev.cruddemo_advanced.entity.Instructor;
 import edu.gusta_dev.cruddemo_advanced.entity.InstructorDetail;
+import edu.gusta_dev.cruddemo_advanced.entity.Student;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -179,6 +180,26 @@ public class AppDAOImplementacao implements AppDAO {
             "SELECT cour FROM Course cour JOIN FETCH cour.reviews WHERE cour.id = :data", Course.class)
             .setParameter("data", courseId); //foi necessário fazer um JOIN FETCH aqui pois o fetch type na anotação sobre a lista de reviews foi setado para LAZY;
 
+        return query.getSingleResult();
+    }
+
+    @Override
+    public Course findCourseWithStudents(int courseId) {
+        
+        TypedQuery<Course> query = entityManager.createQuery(
+            "SELECT cour FROM Course cour JOIN FETCH cour.students WHERE cour.id =:data", Course.class)
+            .setParameter("data", courseId);
+        
+        return query.getSingleResult();
+    }
+
+    @Override
+    public Student findStudentWithCourses(int studentId) {
+        
+        TypedQuery<Student> query = entityManager.createQuery(
+            "SELECT stud FROM Student stud JOIN FETCH stud.courses WHERE stud.id =:data", Student.class)
+            .setParameter("data", studentId);
+        
         return query.getSingleResult();
     }
     

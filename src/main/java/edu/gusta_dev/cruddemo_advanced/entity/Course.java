@@ -12,6 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -61,37 +63,47 @@ public class Course {
     private List<Review> reviews;
 
 
+    //Setting the relationship between course and students (course => students)
+
+    @ManyToMany(fetch = FetchType.LAZY,
+                cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
+    @JoinTable(name = "course_student", // Nome da tabela de junção
+               joinColumns = @JoinColumn(name = "course_id"), // Define a coluna de junção que referencia a tabela 'course'
+               inverseJoinColumns = @JoinColumn(name = "student_id") // Define a coluna de junção que referencia a tabela 'student'
+                )
+    private List<Student> students;
+
     //Construtor sem argumentos:
     public Course() {
-
+        
     }
-
+    
     //Construtor passando o título:
     public Course(String title) {
         this.title = title;
     }
-
+    
     //Getters e setters:
     public int getId() {
         return id;
     }
-
+    
     public void setId(int id) {
         this.id = id;
     }
-
+    
     public String getTitle() {
         return title;
     }
-
+    
     public void setTitle(String title) {
         this.title = title;
     }
-
+    
     public Instructor getInstructor() {
         return instructor;
     }
-
+    
     public void setInstructor(Instructor instructor) {
         this.instructor = instructor;
     }
@@ -99,19 +111,36 @@ public class Course {
     public List<Review> getReviews() {
         return reviews;
     }
-
+    
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
     
     public void addReview(Review review) {
-
+        
         if (reviews == null) {
             reviews = new ArrayList<Review>();
         }
-
+        
         if(review != null) {
             this.reviews.add(review);
+        }
+    }
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+    
+    public void addStudent(Student student) {
+        if (students == null) {
+            students = new ArrayList<Student>();
+        }
+
+        if(student != null) {
+            this.students.add(student);
         }
     }
     
